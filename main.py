@@ -18,8 +18,8 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith("%ahorcado"):
-        ahorcado.hangman_launch()
+    if message.content.startswith("!ahorcado"):
+        await ahorcado.ahorcado_launch()
 
     if any(word in message.content for word in greet_bot):
         await message.channel.send(random.choice(greet_bot))
