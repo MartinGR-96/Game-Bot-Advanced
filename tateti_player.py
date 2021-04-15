@@ -1,85 +1,83 @@
 import math
 import random
-import discord
 
-client=discord.Client()
 
 class Jugador:
     def __init__(self, letra):
         self.letra=letra
         
-    def movimiento_obtener(self,game):
+    def movimiento_obtener(self,juego):
         pass
 
 class jugador_bot(Jugador):
     def __init__(self,letra):
         super().__init__(letra)
     
-    def movimiento_obtener(self,game):
-        cuadro=random.choice(game.available_moves())
+    def movimiento_obtener(self,juego):
+        cuadro=random.choice(juego.movimientos_disponibles())
         return cuadro
 
 class jugador_humano(Jugador):
     def __init__(self,letra):
         super().__init__(letra)
     
-    def movimiento_obtener(self,game):
-        valid_cuadro=False
+    def movimiento_obtener(self,juego):
+        cuadro_valido=False
         val=None
-        while not valid_cuadro:
-            cuadro=input(self.letra+"'s turn. Input move (0-8): ")
+        while not cuadro_valido:
+            cuadro=input("Es el turno de "+self.letra+". Ingrese una posición válida (0-8): ")
             
             try:
                 val=int(cuadro)
-                if val not in game.available_moves():
+                if val not in juego.movimientos_disponibles():
                     raise ValueError
-                valid_cuadro=True
+                cuadro_valido=True
             except ValueError:
-                print("Invalid cuadro. Try again")
+                print("Posición inválida. Intente de nuevo")
         return val
 
 class jugador_bot_dificil(Jugador):
     def __init__(self,letra):
         super().__init__(letra)
     
-    def movimiento_obtener(self,game):
-        if len(game.available_moves())==9:
-            cuadro=random.coice(game.available_moves())
+    def movimiento_obtener(self,juego):
+        if len(juego.movimientos_disponibles())==9:
+            cuadro=random.choice(juego.movimientos_disponibles())
         else:
-            cuadro=self.minimax(game,self.letra)["position"]
+            cuadro=self.minimax(juego,self.letra)["posicion"]
         return cuadro
     
     def minimax(self,state,Jugador):
         max_Jugador=self.letra
-        other_Jugador="O" if Jugador =="X" else "X"
+        otro_Jugador="O" if Jugador =="X" else "X"
         
-        if state.current_winner==other_Jugador:
-            return {"position":None,
-                    "score": 1*(state.num_empty_cuadros()+1) if other_Jugador == max_Jugador else -1*(
-                    state.num_empty_cuadros()+1)
+        if state.jugador_ganador==otro_Jugador:
+            return {"posicion":None,
+                    "score": 1*(state.num_lugares_vacios()+1) if otro_Jugador == max_Jugador else -1*(
+                    state.num_lugares_vacios()+1)
                     }
-        elif not state.empty_cuadros():
-            return {"position":None, "score":0}
+        elif not state.lugares_vacios():
+            return {"posicion":None, "score":0}
         
         if Jugador== max_Jugador:
-            best={"position":None,"score":-math.inf}
+            optimo={"posicion":None,"score":-math.inf}
         else:
-            best={"position":None,"score":math.inf}
+            optimo={"posicion":None,"score":math.inf}
         
-        for possible_move in state.available_moves():
-            state.make_move(possible_move,Jugador)
+        for movimiento_posible in state.movimientos_disponibles():
+            state.movimientos_realizar(movimiento_posible,Jugador)
             
-            sim_score=self.minimax(state,other_Jugador)
+            sim_score=self.minimax(state,otro_Jugador)
             
-            state.board[possible_move]=" "
-            state.current_winner=None
-            sim_score["position"]=possible_move
+            state.tablero[movimiento_posible]=" "
+            state.jugador_ganador=None
+            sim_score["posicion"]=movimiento_posible
             
             if Jugador==max_Jugador:
-                if sim_score["score"]>best["score"]:
-                    best=sim_score
+                if sim_score["score"]>optimo["score"]:
+                    optimo=sim_score
             else:
-                if sim_score["score"]<best["score"]:
-                    best=sim_score
+                if sim_score["score"]<optimo["score"]:
+                    optimo=sim_score
         
-        return best
+        return optimo
