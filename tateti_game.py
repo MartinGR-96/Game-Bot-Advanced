@@ -1,6 +1,8 @@
 from tateti_player import jugador_humano, jugador_bot, jugador_bot_dificil
 import time
+import discord
 
+client=discord.Client()
 
 class tateti:
     def __init__(self):
@@ -87,21 +89,30 @@ def jugar(juego, jugador_x, jugador_o, juego_mostrar=True):
     if juego_mostrar:
         print("¡Es un empate!")
 
+@client.event
+async def tateti_launch(mensaje):
+  if mensaje.author == client.user:
+    return
 
-print("¡TaTeTi!")
-print("¿Desea jugar contra el bot o contra otro jugador?")
-choice = input("").upper()
-if choice == "Y":
-    #HAY QUE PONER PARA JUGAR CONTRA EL BOT
-    jugador_x = jugador_humano("X")
-    jugador_o = jugador_bot_dificil("O")
-    t = tateti()
-    jugar(t, jugador_x, jugador_o, juego_mostrar=True)
-    #Y OPCION DE JUGAR CONTRA EL SUPER BOT O BOT RANDOM
-elif choice == "N":
-    jugador_x = jugador_humano("X")
-    jugador_o = jugador_bot("O")
-    t = tateti()
-    jugar(t, jugador_x, jugador_o, juego_mostrar=True)
-else:
-    print("Opción invalida, intente de nuevo.")
+  await mensaje.channel.send("¡TaTeTi!")
+  await mensaje.channel.send("¿Desea jugar contra otro jugador o contra el bot?")
+  
+  if mensaje.content.startswith("!1"):
+      jugador_x = jugador_humano("X")
+      jugador_o = jugador_humano("O")
+      t = tateti()
+      jugar(t, jugador_x, jugador_o, juego_mostrar=True)
+  elif mensaje.content.startswith("!2"):
+      mensaje.channel.send("¿Contra el bot fácil o el bot invencible?")
+      if mensaje.content.startswith("!1"):
+        jugador_x = jugador_humano("X")
+        jugador_o = jugador_bot("O")
+        t = tateti()
+        jugar(t, jugador_x, jugador_o, juego_mostrar=True)
+      elif mensaje.content.startswith("!2"):
+        jugador_x = jugador_humano("X")
+        jugador_o = jugador_bot_dificil("O")
+        t = tateti()
+        jugar(t, jugador_x, jugador_o, juego_mostrar=True)
+  else:
+      await mensaje.channel.send("Opción invalida, intente de nuevo.")

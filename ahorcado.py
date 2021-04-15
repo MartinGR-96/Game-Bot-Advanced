@@ -60,9 +60,9 @@ async def ahorcado_jugador(mensaje):
 #Funcion del bot que elegira una palabra al azar
 @client.event
 async def ahorcado_bot():
-    palabra = palabra_valida(palabras)
+    palabra = await palabra_valida(palabras)
 
-    ahorcado(palabra)
+    await ahorcado(palabra)
 
 ###ARRANQUE DEL PROGRAMA
 @client.event
@@ -76,7 +76,7 @@ async def ahorcado_launch(mensaje):
   await mensaje.channel.send("2. Otro jugador")
 
   #Usuario elige si jugar contra bot u otro jugador
-  if mensaje.content.startswith("!1"):
+  if mensaje.content.startswith("!ahorcado"):
         await ahorcado_bot()
   elif mensaje.content.startswith("!2"):
         await ahorcado_jugador()
