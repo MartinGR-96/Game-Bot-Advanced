@@ -3,7 +3,7 @@ import os
 import random
 
 client = discord.Client()
-
+ 
 greet_bot = ["hey", "sup", "hi", "hello"]
 
 
