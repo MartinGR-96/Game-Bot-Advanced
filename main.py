@@ -7,7 +7,7 @@ client = discord.Client()
 
 greet_bot = ["hey", "sup", "hi", "hello"]
 
-
+ 
 @client.event
 async def on_ready():
     print("We logged in as {0.user}".format(client))
